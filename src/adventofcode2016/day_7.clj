@@ -65,16 +65,17 @@
                      (some #(string/includes? supernet-seq %) babs-to-look-for))
                  supernet-seqs)))
 
-(defn run-pt1
-      []
+(defn run
+      [filter-fn]
       (->>
-        (map supports-tls? (load-input))
+        (map filter-fn (load-input))
         (filter identity)
         (count)))
 
-(defn run-pt2
+(defn run-pt1
       []
-      (->>
-        (map supports-ssl? (load-input))
-        (filter identity)
-        (count)))
+      (run supports-tls?))
+
+(defn run-pt1
+      []
+      (run supports-ssl?))
