@@ -50,8 +50,8 @@ URLULLLDRDDULRRLRLUULDRUUULDRRLLDDDLDUULLDRLULRRDRRDDDRRDLRRLLDDRDULLRRLLUDUDDLD
   [transitions]
   (reduce (fn [{:keys [code last-button]} instr]
             (let [this-code (walk-keyboard last-button instr transitions)]
-                 {:code        (str code (name this-code))
-                  :last-button this-code})) initial-state input))
+              {:code        (str code (name this-code))
+               :last-button this-code})) initial-state input))
 
 (def run-pt1 (partial run transitions-1))
 (def run-pt2 (partial run transitions-2))

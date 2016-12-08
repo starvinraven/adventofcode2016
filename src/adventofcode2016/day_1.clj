@@ -27,26 +27,26 @@
            (= direction 180) {:y (- dist)})))
 
 (defn run []
-      (let [result (reduce (fn [{:keys [dir x y visiteds]} [turn dist]]
-                               (let [new-dir (new-direction dir turn)
-                                     delta (displacement new-dir dist)
-                                     new-x (+ x (:x delta))
-                                     new-y (+ y (:y delta))
-                                     new-visiteds (points-between x y new-x new-y)]
+          (let [result (reduce (fn [{:keys [dir x y visiteds]} [turn dist]]
+                                 (let [new-dir      (new-direction dir turn)
+                                       delta        (displacement new-dir dist)
+                                       new-x        (+ x (:x delta))
+                                       new-y        (+ y (:y delta))
+                                       new-visiteds (points-between x y new-x new-y)]
 
-                                    (println turn dist "->" new-dir (str "(" new-x ", " new-y ")") new-visiteds)
+                                   (println turn dist "->" new-dir (str "(" new-x ", " new-y ")") new-visiteds)
 
-                                    (doseq [new-visited new-visiteds]
-                                           (when (contains? visiteds new-visited)
-                                                 (println "revisit!" new-visited)))
+                                   (doseq [new-visited new-visiteds]
+                                     (when (contains? visiteds new-visited)
+                                       (println "revisit!" new-visited)))
 
-                                    {:dir      new-dir
-                                     :x        new-x
-                                     :y        new-y
-                                     :visiteds (into visiteds new-visiteds)}))
-                           initial-state
-                           input)
-            dist (+ (Math/abs (:x result)) (Math/abs (:y result)))]
-           (println "result:" result)
-           dist))
+                                   {:dir      new-dir
+                                    :x        new-x
+                                    :y        new-y
+                                    :visiteds (into visiteds new-visiteds)}))
+                               initial-state
+                               input)
+                dist   (+ (Math/abs (:x result)) (Math/abs (:y result)))]
+            (println "result:" result)
+            dist))
 
