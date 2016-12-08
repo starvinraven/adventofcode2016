@@ -21,15 +21,13 @@
 
 (defmulti do-instruction
           (fn [instr state]
-            (if (= "rotate" (first instr))
-              [(first instr) (second instr)]
-              [(first instr)])))
+            (first instr)))
 
 (defn set-cell-on
   [state [x y]]
   (assoc-in state [y x] 1))
 
-(defmethod do-instruction ["rect"]
+(defmethod do-instruction "rect"
   [instr state]
   (let [dimensions   (second instr)
         [h w] (map read-string (rest (re-matches #"(\d+)x(\d+)" dimensions)))
@@ -44,17 +42,6 @@
         rotated-row (vec (concat [(last row)] (butlast row)))]
     (assoc-in state [y] rotated-row)))
 
-(defmethod do-instruction ["rotate" "row"]
-  [instr state]
-  (let [y (Integer/parseInt (last (re-find #"y=(\d+)" (get instr 2))))
-        n (Integer/parseInt (get instr 4))]
-    (println "rotate row" y n)
-    (->> state
-         (iterate #(rotate-row-step % y))
-         (take (inc n))
-         (last)
-         (vec))))
-
 (defn- rotate-column-step
   [state x]
   (let [col         (mapv #(get % x) state)
@@ -62,21 +49,19 @@
     (map-indexed (fn [i row]
                    (vec (assoc-in row [x] (rotated-col i)))) state)))
 
-(defmethod do-instruction ["rotate" "column"]
+(defmethod do-instruction "rotate"
   [instr state]
-  (let [x (Integer/parseInt (last (re-find #"x=(\d+)" (get instr 2))))
-        n (Integer/parseInt (get instr 4))]
-    (println "rotate col" x n)
+  (let [x-or-y    (Integer/parseInt (last (re-find #"[xy]=(\d+)" (get instr 2))))
+        n         (Integer/parseInt (get instr 4))
+        rotate-fn (case (second instr)
+                    "row" rotate-row-step
+                    "column" rotate-column-step)]
+    (println "rotate" (second instr) x-or-y n)
     (->> state
-         (iterate #(rotate-column-step % x))
+         (iterate #(rotate-fn % x-or-y))
          (take (inc n))
          (last)
          (vec))))
-
-(defmethod do-instruction :default
-  [instr state]
-  (println "don't know" (first instr))
-  state)
 
 (defn run
   []
